@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1021">
+  <meta name="description" content="Eine eigenstaendige GitOps-Demo fuer Red Hat OpenShift mit Argo CD, Kustomize und sicherem Nginx auf Port 8080.">
+  <title>GitOps Lab | OpenShift</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script defer src="/app.js"></script>
+</head>
+<body>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+  <div class="shell">
+    <header class="topbar">
+      <a class="identity" href="#top" aria-label="GitOps Lab, Startseite">
+        <span class="brand-icon" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+        <span>OpenShift <strong>GitOps Lab</strong></span>
+      </a>
+      <nav aria-label="Navigation">
+        <a href="#workflow">Workflow</a>
+        <a href="#simulator">Simulation</a>
+        <a href="#howto">N&auml;chste Schritte</a>
+      </nav>
+      <span class="version">DEMO <span class="version-number">v1.0.0</span></span>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="pulse-dot"></span> OPENSHIFT / GITOPS / EXPERIMENT</div>
+          <h1 id="page-title">Vom Commit<br>bis zum <em>Cluster.</em></h1>
+          <p>Eine kleine, eigenst&auml;ndige Anwendung f&uuml;r dein OpenShift-Homelab. Bereitgestellt per Argo CD &ndash; ohne Root-Rechte, ohne externe Web-Abh&auml;ngigkeiten und ohne Port 80.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#simulator">Ablauf erkunden <span aria-hidden="true">&rarr;</span></a>
+            <a class="btn btn-outline" href="#howto">N&auml;chsten Test ansehen</a>
+          </div>
+          <p class="hint">Diese Seite ist eine statische Demo. Pipeline- und Cluster-Status werden nicht live abgefragt.</p>
+        </div>
+        <div class="hero-panel" aria-label="Beispiel fuer den GitOps-Datenfluss">
+          <div class="panel-heading"><span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span> <span>gitops-lab / overview</span> <span class="panel-mode">STATIC DEMO</span></div>
+          <div class="panel-body">
+            <div class="signal"><span class="signal-mark">01</span><span><strong>Repository</strong><small>Manifest + Website im Git</small></span><span class="signal-icon">&check;</span></div>
+            <div class="connection" aria-hidden="true"></div>
+            <div class="signal"><span class="signal-mark">02</span><span><strong>Argo CD</strong><small>Vergleicht Git und Cluster</small></span><span class="signal-icon">&check;</span></div>
+            <div class="connection" aria-hidden="true"></div>
+            <div class="signal"><span class="signal-mark">03</span><span><strong>OpenShift</strong><small>Deployment + Service + Route</small></span><span class="signal-icon">&check;</span></div>
+            <div class="panel-foot"><span class="mini-diamond"></span> Konfiguriert im Git-Repository &middot; kein Live-Monitoring</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="workflow" aria-labelledby="workflow-title">
+        <div class="section-top"><span class="section-index">01 / ARCHITEKTUR</span><h2 id="workflow-title">Vier Bausteine. Ein Workflow.</h2><p>Ein klarer Weg vom Quellcode zur Webanwendung &ndash; ohne manuelle &Auml;nderungen am laufenden Container.</p></div>
+        <div class="workflow-grid">
+          <article class="tile"><div class="tile-top"><span class="tile-number">01</span><span class="tile-symbol">&lt;/&gt;</span></div><h3>GitHub</h3><p>Quellcode, UI-Dateien und Kubernetes-Manifeste werden versioniert.</p><div class="tile-label">SOURCE OF TRUTH</div></article>
+          <article class="tile"><div class="tile-top"><span class="tile-number">02</span><span class="tile-symbol">&lt;&gt;</span></div><h3>Kustomize</h3><p>Erzeugt eine ConfigMap mit Hash. &Auml;nderungen l&ouml;sen ein neues Deployment aus.</p><div class="tile-label">DECLARATIVE CONFIG</div></article>
+          <article class="tile"><div class="tile-top"><span class="tile-number">03</span><span class="tile-symbol">&#8644;</span></div><h3>Argo CD</h3><p>Synchronisiert den gew&uuml;nschten Zustand aus Git mit OpenShift.</p><div class="tile-label">CONTINUOUS DELIVERY</div></article>
+          <article class="tile"><div class="tile-top"><span class="tile-number">04</span><span class="tile-symbol">&#9671;</span></div><h3>OpenShift</h3><p>Nginx auf 8080; Service und HTTPS-Route machen die Seite erreichbar.</p><div class="tile-label">RUNTIME</div></article>
+        </div>
+      </section>
+
+      <section class="section simulator-section" id="simulator" aria-labelledby="sim-title">
+        <div class="section-top"><span class="section-index">02 / INTERAKTIVER LERNMODUS</span><h2 id="sim-title">Was passiert bei einem Release?</h2><p>Starte eine lokale Visualisierung. Sie ver&auml;ndert keine Kubernetes-Ressourcen und startet keine echte Pipeline.</p></div>
+        <div class="simulator-card">
+          <div class="sim-header"><div><span class="sim-eyebrow">RELEASE SIMULATOR</span><h3>Deployment-Ablauf</h3></div><span class="mock-badge">Nur Simulation</span></div>
+          <ol class="timeline" id="timeline">
+            <li data-step="0"><span class="timeline-dot">1</span><span><strong>Commit</strong><small>Quellcode wird in Git aktualisiert</small></span><span class="step-state">Ausstehend</span></li>
+            <li data-step="1"><span class="timeline-dot">2</span><span><strong>Manifest</strong><small>Kustomize erzeugt den gew&uuml;nschten Zustand</small></span><span class="step-state">Ausstehend</span></li>
+            <li data-step="2"><span class="timeline-dot">3</span><span><strong>Synchronisation</strong><small>Argo CD &uuml;bertr&auml;gt Ressourcen zum Cluster</small></span><span class="step-state">Ausstehend</span></li>
+            <li data-step="3"><span class="timeline-dot">4</span><span><strong>Rollout</strong><small>OpenShift startet und pr&uuml;ft den neuen Pod</small></span><span class="step-state">Ausstehend</span></li>
+          </ol>
+          <div class="sim-bottom"><p id="sim-message" role="status" aria-live="polite">Bereit f&uuml;r die Simulation.</p><div class="sim-buttons"><button class="btn btn-outline btn-small" id="reset-btn" type="button">Zur&uuml;cksetzen</button><button class="btn btn-primary btn-small" id="start-btn" type="button">Simulation starten <span aria-hidden="true">&rarr;</span></button></div></div>
+        </div>
+      </section>
+
+      <section class="section" id="howto" aria-labelledby="howto-title">
+        <div class="section-top"><span class="section-index">03 / SELBST AUSPROBIEREN</span><h2 id="howto-title">Teste einen echten GitOps-Rollout.</h2></div>
+        <div class="next-grid"><div class="next-card"><span class="next-n">01</span><h3>Website &auml;ndern</h3><p>&Ouml;ffne <code>gitops-demo/site/index.html</code> in GitHub und &auml;ndere die Versionsnummer oder &Uuml;berschrift.</p></div><div class="next-card"><span class="next-n">02</span><h3>Commit erstellen</h3><p>Speichere die Datei im Demo-Branch. Der neue ConfigMap-Hash wird beim n&auml;chsten Sync verwendet.</p></div><div class="next-card"><span class="next-n">03</span><h3>Argo CD synchronisieren</h3><p>Klicke in der Argo-CD-Anwendung auf Refresh und Sync. Danach die OpenShift-Route neu laden.</p></div></div>
+      </section>
+    </main>
+    <footer><span>OpenShift GitOps Lab <span class="footer-separator">/</span> v1.0.0</span><span>Statische Demo &middot; kein Zugriff auf Cluster-APIs</span></footer>
+  </div>
+</body>
+</html>

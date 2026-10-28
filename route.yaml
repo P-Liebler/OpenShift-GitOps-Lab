@@ -1,0 +1,15 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: gitops-lab
+  labels:
+    app.kubernetes.io/name: gitops-lab
+spec:
+  to:
+    kind: Service
+    name: gitops-lab
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
