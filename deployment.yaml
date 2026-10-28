@@ -28,7 +28,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: web
-          image: registry.access.redhat.com/ubi9/nginx-124:latest
+          image: docker.io/nginx/nginx-unprivileged:stable-alpine
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -70,15 +70,15 @@ spec:
             failureThreshold: 12
           volumeMounts:
             - name: site
-              mountPath: /opt/app-root/src/index.html
+              mountPath: /usr/share/nginx/html/index.html
               subPath: index.html
               readOnly: true
             - name: site
-              mountPath: /opt/app-root/src/styles.css
+              mountPath: /usr/share/nginx/html/styles.css
               subPath: styles.css
               readOnly: true
             - name: site
-              mountPath: /opt/app-root/src/app.js
+              mountPath: /usr/share/nginx/html/app.js
               subPath: app.js
               readOnly: true
       volumes:

@@ -6,8 +6,8 @@ It does **not** deploy Private-IIP and does not access cluster APIs.
 ## Design
 
 - One small Nginx workload listening on **8080** (not privileged port 80).
-- Red Hat OpenShift-compatible image `registry.access.redhat.com/ubi9/nginx-124:latest`.
-- Restrictive container context, no fixed UID and no extra SCC permissions.
+- Runnable non-root NGINX image `docker.io/nginx/nginx-unprivileged:stable-alpine` with an unprivileged 8080 listener. The previous Red Hat UBI9 NGINX image was an S2I builder and exited instead of serving pages.
+- Restrictive container context, no fixed UID and no extra SCC permissions. HTML/CSS/JS are mounted into the NGINX document root `/usr/share/nginx/html/`.
 - Kustomize generates a versioned ConfigMap from the HTML, CSS and JS files.
   Every website change creates a new ConfigMap hash and triggers a rollout on sync.
 - Kubernetes Deployment + Service + OpenShift Route (TLS at router; browser HTTP redirected to HTTPS).
@@ -31,6 +31,14 @@ Do not enable auto-prune or self-heal until the first deployment works. This dem
 unique resource names and is independent of your existing `guestbook-ui` Deployment.
 If an older demo fails, you may remove that *separate* Argo Application after checking
 which Kubernetes resources its deletion dialog proposes to delete.
+
+## Fix an existing deployed version
+
+If you already deployed the previous image and the Pod is in `CrashLoopBackOff`,
+open the existing `openshift-gitops-lab` application in Argo CD, choose **REFRESH**,
+then **SYNC > SYNCHRONIZE** (with PRUNE, FORCE and REPLACE disabled). After the rollout,
+check that the `gitops-lab` Pod is Running/Ready and that its Route serves the page.
+Do not delete the namespace or change the OpenShift SCC.
 
 ## Make a real GitOps change
 
@@ -60,6 +68,6 @@ RAM limits 256Mi. Real cluster load depends on the image and node availability.
 ## Scope and safety
 
 This is a *test* deployment in an independent repository. The Private-IIP repository
-is not used or modified by this lab. This demo is not a production release. The image currently uses a floating `latest` tag for simplicity;
+is not used or modified by this lab. This demo is not a production release. The image currently uses a moving `stable-alpine` tag for simplicity;
 for production you would use an approved pinned digest, vulnerability scan,
 and verified update policy.
