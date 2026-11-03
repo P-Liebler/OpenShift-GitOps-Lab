@@ -1,0 +1,21 @@
+services:
+  gitops-lab:
+    build:
+      context: .
+    image: openshift-gitops-lab:local
+    ports:
+      - "${GITOPS_LAB_BIND_ADDRESS:-127.0.0.1}:${GITOPS_LAB_PORT:-8080}:8080"
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8080/ || exit 1"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
