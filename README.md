@@ -1,6 +1,6 @@
 # OpenShift GitOps Lab (Demo)
 
-Standalone static demo for OpenShift 4.21/4.22 and Red Hat OpenShift GitOps / Argo CD.
+Standalone static demo for OpenShift 4.21/4.22 with Red Hat OpenShift GitOps / Argo CD, or for local Docker use.
 It does **not** deploy Private-IIP and does not access cluster APIs.
 
 ## Design
@@ -13,6 +13,63 @@ It does **not** deploy Private-IIP and does not access cluster APIs.
 - Kubernetes Deployment + Service + OpenShift Route (TLS at router; browser HTTP redirected to HTTPS).
 - No secrets, database, persistent volumes, external frontend dependencies or direct cluster credentials.
 - Interactive website timeline is explicitly a **local simulation**, not live Argo status.
+
+## Run locally with Docker (no OpenShift required)
+
+Requirements: Docker Engine with Docker Compose v2 (or Docker Desktop). No OpenShift,
+Kubernetes, Argo CD, container registry account, secrets or external service is needed.
+
+```bash
+git clone https://github.com/P-Liebler/OpenShift-GitOps-Lab.git
+cd OpenShift-GitOps-Lab
+docker compose up -d --build
+```
+
+Open **http://localhost:8080** in your browser. The default binding is
+`127.0.0.1:8080`, so the website is only reachable from the Docker host.
+
+```bash
+docker compose ps           # Status and health
+docker compose logs -f      # Web server logs
+docker compose down         # Stop and remove the container
+```
+
+To use a different host port or allow access from other devices on a trusted
+LAN, copy `.env.example` to `.env` and adjust the settings:
+
+```dotenv
+GITOPS_LAB_BIND_ADDRESS=0.0.0.0
+GITOPS_LAB_PORT=8085
+```
+
+Then run `docker compose up -d --build` and open
+`http://<docker-host-ip>:8085`. Binding to `0.0.0.0` exposes the port on
+all host interfaces; check your firewall and do not expose this demo directly
+to the public Internet. Leave the bind address at `127.0.0.1` for local use.
+
+When changing a file in `site/`, rebuild and recreate the container with
+`docker compose up -d --build`. The local Docker image is rebuilt from the
+same website assets as the OpenShift ConfigMap. Docker does **not**
+automatically sync changes from Git and does **not** run Argo CD.
+
+### Docker without Compose
+
+```bash
+docker build -t openshift-gitops-lab:local .
+docker run -d --name gitops-lab -p 127.0.0.1:8080:8080 --read-only --tmpfs /tmp --cap-drop ALL --security-opt no-new-privileges:true openshift-gitops-lab:local
+```
+
+Open **http://localhost:8080**. To stop and remove this standalone container:
+
+```bash
+docker stop gitops-lab
+docker rm gitops-lab
+```
+
+Both Docker methods run only the static educational website and its
+browser-side release simulation. Neither contacts an OpenShift/Argo CD
+cluster nor performs real GitOps deployments. The existing OpenShift YAML
+files are unchanged and remain the supported GitOps deployment path.
 
 ## Install without oc (OpenShift + Argo CD web interface)
 

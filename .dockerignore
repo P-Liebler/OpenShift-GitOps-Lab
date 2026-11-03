@@ -1,0 +1,10 @@
+.git
+.github
+.env
+.env.*
+README.md
+deployment.yaml
+service.yaml
+route.yaml
+kustomization.yaml
+compose.yaml
